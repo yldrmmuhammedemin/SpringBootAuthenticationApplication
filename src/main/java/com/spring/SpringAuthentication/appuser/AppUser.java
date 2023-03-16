@@ -1,10 +1,7 @@
 package com.spring.SpringAuthentication.appuser;
 
 import com.spring.SpringAuthentication.appuser.AppUserModel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,16 +13,19 @@ import java.util.Collections;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+@ToString
 @Entity
 public class AppUser implements UserDetails {
-    @Id
+
     @SequenceGenerator(
             name = "user_sequence",
-            sequenceName = "user_sequence")
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
+    @Id
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
+            strategy = GenerationType.AUTO,
             generator = "user_sequence"
-
     )
     private Long id;
     private String firstname;
@@ -34,23 +34,19 @@ public class AppUser implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private AppUserModel appUserModel;
-    private Boolean locked;
-    private Boolean enabled;
+    private Boolean locked = false;
+    private Boolean enabled = false;
 
     public AppUser(String firstname,
                    String lastname,
                    String email,
                    String password,
-                   AppUserModel appUserModel,
-                   Boolean locked,
-                   Boolean enabled) {
+                   AppUserModel appUserModel) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
         this.appUserModel = appUserModel;
-        this.locked = locked;
-        this.enabled = enabled;
     }
 
     @Override
@@ -68,6 +64,10 @@ public class AppUser implements UserDetails {
     public String getUsername() {
         return email;
     }
+
+    public String getFirstName(){return firstname;}
+
+    public String getLastName(){return lastname;}
 
     @Override
     public boolean isAccountNonExpired() {
